@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles: the body text is white by default to contrast with
+   the dark backgrounds defined in the Tailwind configuration. */
+body {
+  @apply text-white;
+}
