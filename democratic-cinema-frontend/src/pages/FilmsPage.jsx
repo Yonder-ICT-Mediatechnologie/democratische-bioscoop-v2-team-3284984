@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import movies from '../data/movies';
+import React, { useState, useEffect } from 'react';
+// import movies from '../data/movies';
 import MovieCard from '../components/MovieCard';
 import { Button } from '../components/Button';
 import Search from '../components/Search';
@@ -16,6 +16,29 @@ import Search from '../components/Search';
  *   setCurrentMovie – callback to set the currently selected film
  */
 const FilmsPage = ({ setPage, setCurrentMovie }) => {
+
+const [movies, setMovies] = useState([]);
+
+async function fetchMovies() {
+  try {
+    const response = await fetch(process.env.BACKEND_API_URL + '/films');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+    return [];
+  }
+}
+useEffect(() => {
+  fetchMovies().then((movieData) => {
+    setMovies(movieData);
+  });
+}, []);
+
+
   // Extract unique categories from the movies list
   const categories = ['Alle', ...Array.from(new Set(movies.map((m) => m.category)))];
   const [activeCategory, setActiveCategory] = useState('Alle');

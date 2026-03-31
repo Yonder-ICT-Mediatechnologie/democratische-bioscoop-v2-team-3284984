@@ -41,7 +41,7 @@ async function buildServer() {
 // successfully listening.
 buildServer()
   .then(() => {
-    const port = process.env.PORT || 3000;
+    const port = process.env.PORT || 4000;
     fastify.listen({ port, host: '0.0.0.0' }, (err, address) => {
       if (err) {
         fastify.log.error(err);

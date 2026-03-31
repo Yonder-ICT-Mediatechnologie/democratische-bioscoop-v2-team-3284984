@@ -12,7 +12,7 @@ const RegisterPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://127.0.0.1:3000/admin/register", {
+      const res = await fetch(process.env.BACKEND_API_URL + "/admin/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

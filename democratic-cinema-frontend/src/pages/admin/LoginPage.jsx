@@ -11,7 +11,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://127.0.0.1:3000/admin/login", {
+      const res = await fetch(process.env.BACKEND_API_URL + "/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -80,7 +80,7 @@ const LoginPage = () => {
           </div>
 
           <Button type="submit" variant="accent" className="w-full text-sm">
-                      Registreren
+            Inloggen
                     </Button>
         </form>
 

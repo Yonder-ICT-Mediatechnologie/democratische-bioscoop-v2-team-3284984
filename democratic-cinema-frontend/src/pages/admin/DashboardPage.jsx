@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 
-const API_URL = "http://127.0.0.1:3000";
-
 const emptyFilm = {
   title: "",
   description: "",
@@ -29,7 +27,7 @@ const DashboardPage = () => {
   const fetchFilms = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/films`);
+      const res = await fetch(`${process.env.BACKEND_API_URL}/films`);
       const data = await res.json();
 
       if (!res.ok) {
@@ -65,8 +63,8 @@ const DashboardPage = () => {
 
     try {
       const url = editingId
-        ? `${API_URL}/films/${editingId}`
-        : `${API_URL}/films`;
+        ? `${process.env.BACKEND_API_URL}/films/${editingId}`
+        : `${process.env.BACKEND_API_URL}/films`;
 
       const method = editingId ? "PUT" : "POST";
 
