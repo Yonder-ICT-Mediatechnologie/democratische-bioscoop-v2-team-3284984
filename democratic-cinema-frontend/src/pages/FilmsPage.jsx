@@ -21,7 +21,7 @@ const [movies, setMovies] = useState([]);
 
 async function fetchMovies() {
   try {
-    const response = await fetch(process.env.BACKEND_API_URL + '/films');
+    const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + '/films');
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
