@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
+import VotingPage from './pages/VotingPage';
 import FilmsPage from './pages/FilmsPage';
 import SchedulePage from './pages/SchedulePage';
 import FilmDetails from './pages/FilmDetails';
@@ -11,17 +12,7 @@ import RegisterPage from './pages/admin/RegisterPage';
 import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
 
-/**
- * Top‑level application component.  State variables determine which page
- * is visible, which movie is selected and which seats have been chosen.
- * Simple conditional rendering swaps out the main content based on the
- * page.  A useEffect hook scrolls back to the top whenever the page
- * changes.
- */
 function App() {
-  // Map routes to page keys and vice versa.  These helpers convert
-  // between the URL path and the internal page identifier.  The
-  // '/stemmen' path is used for the voting/home page.
   const pathToPage = (path) => {
     switch (path) {
       case '/register':
@@ -41,11 +32,13 @@ function App() {
       case '/checkout':
         return 'checkout';
       case '/stemmen':
+        return 'stemmen';
       case '/':
       default:
         return 'home';
     }
   };
+
   const pageToPath = (p) => {
     switch (p) {
       case 'register':
@@ -64,45 +57,48 @@ function App() {
         return '/reserve';
       case 'checkout':
         return '/checkout';
+      case 'stemmen':
+        return '/stemmen';
       case 'home':
       default:
-        return '/stemmen';
+        return '/';
     }
   };
 
-  // Initialize state based on the current URL
   const [page, setPageState] = useState(() => pathToPage(window.location.pathname));
   const [currentMovie, setCurrentMovie] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [emailSent, setEmailSent] = useState(false);
 
-  // Wrapper to update both the URL and the internal page state
   const setPage = (newPage) => {
     const newPath = pageToPath(newPage);
+
     if (window.location.pathname !== newPath) {
       window.history.pushState({}, '', newPath);
     }
+
     setPageState(newPage);
   };
 
-  // Listen for browser navigation events and update page state accordingly
   useEffect(() => {
     const handlePop = () => {
       setPageState(pathToPage(window.location.pathname));
     };
+
     window.addEventListener('popstate', handlePop);
     return () => window.removeEventListener('popstate', handlePop);
   }, []);
 
-  // Scroll to top when page changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [page]);
 
-  // Determine which component to render based on current page
   let content = null;
+
   if (page === 'home') {
     content = <HomePage setPage={setPage} setCurrentMovie={setCurrentMovie} />;
+  } else if (page === 'stemmen') {
+    content = <VotingPage setPage={setPage} setCurrentMovie={setCurrentMovie} />;
   } else if (page === 'register') {
     content = <RegisterPage />;
   } else if (page === 'login') {

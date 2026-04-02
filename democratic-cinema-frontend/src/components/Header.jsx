@@ -17,14 +17,14 @@ const Header = ({ currentPage, setPage }) => {
   // schedule of screenings.
   const pages = [
     { key: 'films', label: 'Films' },
-    { key: 'home', label: 'Stemmen' },
+    { key: 'stemmen', label: 'Stemmen' },
     { key: 'schedule', label: 'Schema' },
   ];
   return (
     <nav className="bg-primary py-4 px-6 flex items-center justify-between border-b border-secondary">
       {/* Logo with link */}
       <a
-        href="/stemmen"
+        href="/"
         className="flex items-center gap-3"
         onClick={(e) => {
           e.preventDefault();

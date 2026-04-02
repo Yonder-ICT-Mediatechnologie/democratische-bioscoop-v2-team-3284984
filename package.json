@@ -1,0 +1,17 @@
+{
+  "name": "democratic-cinema-monorepo",
+  "private": true,
+  "workspaces": [
+    "democratic-cinema-backend",
+    "democratic-cinema-frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w democratic-cinema-frontend\" \"npm run dev -w democratic-cinema-backend\"",
+    "dev:frontend": "npm run dev -w democratic-cinema-frontend",
+    "dev:backend": "npm run dev -w democratic-cinema-backend",
+    "install:all": "npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
