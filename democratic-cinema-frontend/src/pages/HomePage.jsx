@@ -1,5 +1,4 @@
-import React from 'react';
-import movies from '../data/movies';
+import { useEffect, useState } from 'react';
 import VoteSection from '../components/VoteSection';
 import MovieCard from '../components/MovieCard';
 
@@ -19,6 +18,29 @@ const HomePage = ({ setPage, setCurrentMovie }) => {
   // beyond four films you can adjust the slice indices or filter by
   // category/date.  Here we simply take the first two as "today" and
   // the remainder as "next week".
+
+  const [movies, setMovies] = useState([]);
+  
+  async function fetchMovies() {
+    try {
+      const response = await fetch(import.meta.env.VITE_BACKEND_API_URL + '/films');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+      return [];
+    }
+  }
+  useEffect(() => {
+    fetchMovies().then((movieData) => {
+      setMovies(movieData);
+    });
+  }, []);
+
+
   const todayMovies = movies.slice(0, 2);
   const nextWeekMovies = movies.slice(2);
 

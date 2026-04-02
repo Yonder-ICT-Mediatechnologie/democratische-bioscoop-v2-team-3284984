@@ -15,7 +15,7 @@ const MovieCard = ({ movie, small, onClick, showVoteButton }) => {
       onClick={() => onClick && onClick()}
     >
       <img
-        src={movie.image}
+        src={movie.url_image}
         alt={movie.title}
         className={`${small ? 'h-28 w-40' : 'h-40 w-64'} object-cover rounded-lg shadow-lg`}
       />

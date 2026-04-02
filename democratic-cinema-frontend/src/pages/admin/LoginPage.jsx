@@ -11,7 +11,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch(process.env.BACKEND_API_URL + "/admin/login", {
+      const res = await fetch(import.meta.env.VITE_BACKEND_API_URL + "/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

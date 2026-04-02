@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 // import movies from '../data/movies';
 import MovieCard from '../components/MovieCard';
 import { Button } from '../components/Button';
@@ -59,17 +59,6 @@ useEffect(() => {
         {/* Category filter */}
         <div className="flex flex-wrap gap-2">
           {categories.map((cat) => (
-            // <button
-            //   key={cat}
-            //   className={`px-4 py-1 rounded-full text-sm font-medium transition-colors ${
-            //     activeCategory === cat
-            //       ? 'bg-accent text-white'
-            //       : 'bg-secondary text-gray-300 hover:bg-accent hover:text-white'
-            //   }`}
-            //   onClick={() => setActiveCategory(cat)}
-            // >
-            //   {cat}
-            // </button>
             <Button
               key={cat}
               className={`text-sm font-medium transition-colors ${
@@ -92,23 +81,6 @@ useEffect(() => {
                   onChange={setSearchQuery}
                 />
       </div>
-          {/* Simple search icon (magnifying glass) */}
-          {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-4.35-4.35M17.65 17.65A7.5 7.5 0 1117.65 2.5a7.5 7.5 0 010 15z"
-            />
-          </svg>
-        </button> */}
-      {/* </div> */}
 
       {/* Movie grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">

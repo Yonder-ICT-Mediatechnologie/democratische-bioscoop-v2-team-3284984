@@ -24,7 +24,7 @@ async function buildServer() {
   await fastify.register(cors, {
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'x-admin-token']
+    allowedHeaders: ['Content-Type', 'x-admin-token', 'Authorization']
   });
 
   // Attach public and admin routes.  The order does not matter

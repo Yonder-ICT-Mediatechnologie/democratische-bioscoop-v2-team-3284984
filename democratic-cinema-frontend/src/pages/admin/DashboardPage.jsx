@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.VITE_BACKEND_API_URL;
+
 const emptyFilm = {
   title: "",
   description: "",
-  releaseDate: ""
+  category: "",
+  url_trailer: "",
+  url_image: ""
 };
 
 const DashboardPage = () => {
@@ -22,12 +26,14 @@ const DashboardPage = () => {
     }
 
     fetchFilms();
-  }, []);
+  }, [token]);
 
   const fetchFilms = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.BACKEND_API_URL}/films`);
+      setMessage("");
+
+      const res = await fetch(`${API_URL}/films`);
       const data = await res.json();
 
       if (!res.ok) {
@@ -41,32 +47,46 @@ const DashboardPage = () => {
       setFilms(normalizedFilms);
     } catch (err) {
       setMessage("❌ " + err.message);
+      setFilms([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
   };
 
   const resetForm = () => {
     setForm(emptyFilm);
     setEditingId(null);
+    setMessage("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setMessage("");
+
       const url = editingId
-        ? `${process.env.BACKEND_API_URL}/films/${editingId}`
-        : `${process.env.BACKEND_API_URL}/films`;
+        ? `${API_URL}/films/${editingId}`
+        : `${API_URL}/films`;
 
       const method = editingId ? "PUT" : "POST";
+
+      const payload = {
+        title: form.title,
+        description: form.description,
+        category: form.category,
+        url_trailer: form.url_trailer,
+        url_image: form.url_image
+      };
 
       const res = await fetch(url, {
         method,
@@ -74,7 +94,7 @@ const DashboardPage = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
@@ -85,18 +105,22 @@ const DashboardPage = () => {
 
       setMessage(editingId ? "✅ Film geüpdatet" : "✅ Film aangemaakt");
       resetForm();
-      fetchFilms();
+      await fetchFilms();
     } catch (err) {
       setMessage("❌ " + err.message);
     }
   };
 
   const handleEdit = (film) => {
-    setEditingId(film.idFilm || film.id);
+    const filmId = film._id || film.idFilm || film.id;
+
+    setEditingId(filmId);
     setForm({
       title: film.title || "",
       description: film.description || "",
-      releaseDate: film.releaseDate || ""
+      category: film.category || "",
+      url_trailer: film.url_trailer || "",
+      url_image: film.url_image || ""
     });
     setMessage("");
   };
@@ -106,6 +130,8 @@ const DashboardPage = () => {
     if (!confirmed) return;
 
     try {
+      setMessage("");
+
       const res = await fetch(`${API_URL}/films/${id}`, {
         method: "DELETE",
         headers: {
@@ -120,7 +146,7 @@ const DashboardPage = () => {
       }
 
       setMessage("✅ Film verwijderd");
-      fetchFilms();
+      await fetchFilms();
     } catch (err) {
       setMessage("❌ " + err.message);
     }
@@ -188,23 +214,52 @@ const DashboardPage = () => {
 
               <div>
                 <label className="block text-sm text-gray-400 mb-1">
-                  Release Date
+                  Categorie
                 </label>
                 <input
                   type="text"
-                  name="releaseDate"
-                  value={form.releaseDate}
+                  name="category"
+                  value={form.category}
                   onChange={handleChange}
                   className="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 text-gray-200 focus:outline-none"
-                  placeholder="2024"
+                  placeholder="action"
                   required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Trailer URL
+                </label>
+                <input
+                  type="text"
+                  name="url_trailer"
+                  value={form.url_trailer}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 text-gray-200 focus:outline-none"
+                  placeholder="https://youtube.com/..."
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-1">
+                  Afbeelding URL
+                </label>
+                <input
+                  type="text"
+                  name="url_image"
+                  value={form.url_image}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 text-gray-200 focus:outline-none"
+                  placeholder="https://example.com/image.jpg"
                 />
               </div>
 
               <div className="flex gap-3">
                 <button
                   type="submit"
-                  className="w-full bg-accent text-white py-2 rounded-md hover:bg-blue-600"
+                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
                 >
                   {editingId ? "Opslaan" : "Aanmaken"}
                 </button>
@@ -240,7 +295,7 @@ const DashboardPage = () => {
             ) : (
               <div className="space-y-4">
                 {films.map((film) => {
-                  const filmId = film.idFilm || film.id;
+                  const filmId = film._id || film.idFilm || film.id;
 
                   return (
                     <div
@@ -248,16 +303,41 @@ const DashboardPage = () => {
                       className="border border-gray-700 rounded-lg p-4 bg-gray-900"
                     >
                       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                        <div>
+                        <div className="flex-1">
                           <h3 className="text-lg font-bold">
                             {film.title || "Zonder titel"}
                           </h3>
+
                           <p className="text-sm text-gray-400 mt-1">
-                            Release: {film.releaseDate || "—"}
+                            Categorie: {film.category || "—"}
                           </p>
+
+                          <p className="text-sm text-gray-400 mt-1">
+                            Votes: {film.votes ?? 0}
+                          </p>
+
                           <p className="text-gray-300 mt-3">
                             {film.description || "Geen beschrijving beschikbaar"}
                           </p>
+
+                          {film.url_trailer && (
+                            <p className="mt-3">
+                              <a
+                                href={film.url_trailer}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-blue-400 hover:underline break-all"
+                              >
+                                Trailer bekijken
+                              </a>
+                            </p>
+                          )}
+
+                          {film.url_image && (
+                            <p className="mt-2 text-sm text-gray-400 break-all">
+                              Image: {film.url_image}
+                            </p>
+                          )}
                         </div>
 
                         <div className="flex gap-2 shrink-0">
